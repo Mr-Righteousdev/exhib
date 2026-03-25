@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLAU Exhibition — Student Registration</title>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1a3a6b;
+    --primary-light: #2a52a0;
+    --gold: #b8860b;
+    --white: #ffffff;
+    --off-white: #f7f8fa;
+    --border: #d0d5dd;
+    --text: #1c2233;
+    --muted: #6b7280;
+    --success: #166534;
+    --success-bg: #dcfce7;
+    --error: #991b1b;
+    --error-bg: #fee2e2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--off-white);
+    color: var(--text);
+    font-family: 'Lato', Georgia, serif;
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  /* ── Header ── */
+  header { background: var(--primary); border-bottom: 4px solid var(--gold); }
+
+  .header-inner {
+    max-width: 980px; margin: 0 auto;
+    padding: 18px 28px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  }
+
+  .brand { display: flex; align-items: center; gap: 14px; }
+
+  .crest {
+    width: 50px; height: 50px; background: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; border: 2px solid var(--gold);
+  }
+
+  .brand-text h1 { font-family: Georgia, serif; font-size: 17px; font-weight: normal; color: white; letter-spacing: 0.02em; line-height: 1.25; }
+  .brand-text p  { font-size: 11px; color: rgba(255,255,255,0.65); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 2px; }
+
+  .counter { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25); border-radius: 6px; padding: 7px 16px; text-align: center; }
+  .counter .num { font-family: Georgia, serif; font-size: 24px; line-height: 1; color: white; }
+  .counter .lbl { font-size: 10px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.07em; }
+
+  /* ── Tab nav ── */
+  .tab-nav { background: white; border-bottom: 1px solid var(--border); box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+
+  .tab-nav-inner { max-width: 980px; margin: 0 auto; padding: 0 28px; display: flex; gap: 0; }
+
+  .tab-btn {
+    padding: 14px 28px;
+    background: none; border: none;
+    font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1px;
+    transition: all 0.15s;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  .tab-btn:hover { color: var(--primary); }
+  .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+  .tab-btn .tab-count {
+    background: var(--primary);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 7px;
+    border-radius: 10px;
+    display: none;
+  }
+
+  .tab-btn.active .tab-count,
+  .tab-btn .tab-count.has-data { display: inline-block; }
+
+  /* ── Pages ── */
+  .page { display: none; max-width: 980px; margin: 0 auto; padding: 32px 28px 64px; }
+  .page.active { display: block; }
+
+  /* ── Card ── */
+  .card { background: var(--white); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: hidden; }
+  .card-header { background: var(--primary); padding: 12px 22px; }
+  .card-header h3 { font-family: Georgia, serif; font-size: 15px; font-weight: normal; color: white; letter-spacing: 0.02em; }
+  .card-body { padding: 26px 22px; }
+
+  /* ── Form ── */
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px 26px; }
+  .form-group { display: flex; flex-direction: column; gap: 6px; }
+  .form-group.full { grid-column: 1 / -1; }
+
+  .form-group label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text); }
+  .form-group label .req { color: #b91c1c; margin-left: 2px; }
+
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    width: 100%; padding: 9px 12px;
+    border: 1px solid var(--border); border-radius: 5px;
+    font-family: 'Lato', sans-serif; font-size: 14px;
+    color: var(--text); background: white; outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+
+  .form-group input:focus,
+  .form-group select:focus,
+  .form-group textarea:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(26,58,107,0.1);
+  }
+
+  .form-group input::placeholder,
+  .form-group textarea::placeholder { color: #b0b7c3; }
+  .form-group textarea { resize: vertical; min-height: 70px; }
+
+  .radio-row { display: flex; gap: 6px; }
+  .radio-opt { flex: 1; position: relative; }
+  .radio-opt input[type="radio"] { position: absolute; opacity: 0; width: 0; height: 0; }
+  .radio-opt label {
+    display: block; text-align: center; padding: 9px 4px;
+    border: 1px solid var(--border); border-radius: 5px;
+    font-size: 13px; font-weight: 400; text-transform: none; letter-spacing: 0;
+    color: var(--muted); cursor: pointer; transition: all 0.15s; user-select: none;
+  }
+  .radio-opt input[type="radio"]:checked + label { background: var(--primary); border-color: var(--primary); color: white; font-weight: 700; }
+
+  .form-divider { grid-column: 1 / -1; border: none; border-top: 1px dashed var(--border); margin: 2px 0; }
+
+  .form-footer { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--border); }
+
+  .btn { padding: 10px 22px; border-radius: 5px; font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; transition: all 0.15s; border: 1px solid transparent; }
+
+  .btn-secondary { background: white; border-color: var(--border); color: var(--muted); }
+  .btn-secondary:hover { border-color: #9ca3af; color: var(--text); }
+
+  .btn-primary { background: var(--primary); color: white; border-color: var(--primary); padding: 10px 30px; font-size: 14px; }
+  .btn-primary:hover { background: var(--primary-light); border-color: var(--primary-light); }
+  .btn-primary:active { transform: scale(0.98); }
+
+  .btn-export {
+    display: flex; align-items: center; gap: 7px;
+    background: var(--gold); color: white;
+    border: none; border-radius: 5px; padding: 9px 18px;
+    font-family: 'Lato', sans-serif; font-size: 13px; font-weight: 700;
+    cursor: pointer; letter-spacing: 0.04em; text-transform: uppercase;
+    transition: background 0.15s;
+  }
+  .btn-export:hover { background: #a0740a; }
+
+  /* ── Toast ── */
+  .toast {
+    position: fixed; bottom: 24px; left: 50%;
+    transform: translateX(-50%) translateY(60px);
+    padding: 11px 22px; border-radius: 5px;
+    font-size: 14px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+    transition: transform 0.3s ease;
+    z-index: 999; white-space: nowrap;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    border-left: 4px solid transparent;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { background: var(--success-bg); color: var(--success); border-left-color: #16a34a; }
+  .toast.error   { background: var(--error-bg);   color: var(--error);   border-left-color: #dc2626; }
+
+  /* ── Records page ── */
+  .records-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .records-toolbar h2 { font-family: Georgia, serif; font-size: 20px; font-weight: normal; color: var(--primary); }
+
+  .search-box {
+    padding: 8px 12px; border: 1px solid var(--border); border-radius: 5px;
+    font-family: 'Lato', sans-serif; font-size: 13px; color: var(--text);
+    outline: none; width: 220px; transition: border-color 0.15s;
+  }
+  .search-box:focus { border-color: var(--primary); }
+
+  .badge { display: inline-block; padding: 2px 9px; border-radius: 3px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+  .badge-m { background: #dbeafe; color: #1d4ed8; }
+  .badge-f { background: #fce7f3; color: #9d174d; }
+  .badge-o { background: #fef3c7; color: #92400e; }
+
+  .empty-msg { text-align: center; padding: 40px; color: var(--muted); font-size: 13px; font-style: italic; }
+
+  .full-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .full-table thead tr { background: #f0f2f7; }
+  .full-table th { padding: 10px 13px; text-align: left; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); border-bottom: 2px solid var(--border); white-space: nowrap; }
+  .full-table td { padding: 9px 13px; border-bottom: 1px solid #eef0f5; color: var(--text); }
+  .full-table tbody tr:hover { background: #f7f8fa; }
+
+  .page-footer { text-align: center; margin-top: 40px; font-size: 12px; color: #b0b7c3; }
+
+  @media (max-width: 620px) {
+    .header-inner { flex-wrap: wrap; }
+    .form-grid { grid-template-columns: 1fr; }
+    .form-group.full { grid-column: 1; }
+    .page { padding: 20px 14px 48px; }
+    .card-body { padding: 18px 14px; }
+    .tab-btn { padding: 12px 16px; font-size: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Header ── -->
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <div class="crest">
+        <svg width="32" height="32" viewBox="0 0 34 34" fill="none">
+          <circle cx="17" cy="17" r="15" stroke="#1a3a6b" stroke-width="1.5" fill="none"/>
+          <path d="M17 5 L20 13 H28 L22 18 L24 26 L17 21 L10 26 L12 18 L6 13 H14 Z" fill="#b8860b"/>
+          <circle cx="17" cy="17" r="4" fill="#1a3a6b"/>
+        </svg>
+      </div>
+      <div class="brand-text">
+        <h1>St. Lawrence University Uganda</h1>
+        <p>Gulu Exhibition &mdash; Student Registration System</p>
+      </div>
+    </div>
+    <div class="counter">
+      <div class="num" id="totalCount">0</div>
+      <div class="lbl">Registered</div>
+    </div>
+  </div>
+</header>
+
+<!-- ── Tab navigation ── -->
+<div class="tab-nav">
+  <div class="tab-nav-inner">
+    <button class="tab-btn active" onclick="switchTab('register', this)">
+      &#9998;&nbsp; Registration
+    </button>
+    <button class="tab-btn" onclick="switchTab('records', this)">
+      &#9776;&nbsp; View Records
+      <span class="tab-count" id="tabCount">0</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- REGISTRATION PAGE -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page active" id="pg-register">
+
+  <div style="margin-bottom:22px; padding-bottom:14px; border-bottom:2px solid var(--border);">
+    <h2 style="font-family:Georgia,serif;font-size:21px;font-weight:normal;color:var(--primary);">New Student Registration</h2>
+    <p style="font-size:13px;color:var(--muted);margin-top:4px;">Fill in all required fields and click <strong>Register &amp; Next Student</strong> to save and continue.</p>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><h3>Student Details</h3></div>
+    <div class="card-body">
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Full Name <span class="req">*</span></label>
+          <input type="text" id="fullName" placeholder="e.g. Nakato Sarah" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label>Secondary School <span class="req">*</span></label>
+          <input type="text" id="school" placeholder="e.g. Gulu High School" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label>Class / Year <span class="req">*</span></label>
+          <select id="classYear">
+            <option value="">— Select class —</option>
+            <option>S.1</option><option>S.2</option><option>S.3</option>
+            <option>S.4</option><option>S.5</option><option>S.6</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Gender <span class="req">*</span></label>
+          <div class="radio-row">
+            <div class="radio-opt"><input type="radio" name="gender" id="gM" value="Male"><label for="gM">Male</label></div>
+            <div class="radio-opt"><input type="radio" name="gender" id="gF" value="Female"><label for="gF">Female</label></div>
+            <div class="radio-opt"><input type="radio" name="gender" id="gO" value="Other"><label for="gO">Other</label></div>
+          </div>
+        </div>
+
+        <hr class="form-divider">
+
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="phone" placeholder="e.g. 0772 123 456" autocomplete="off">
+        </div>
+
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="email" placeholder="e.g. sarah@gmail.com" autocomplete="off">
+        </div>
+
+        <div class="form-group full">
+          <label>Subject Combination <span class="req">*</span></label>
+          <input type="text" id="combination" placeholder="e.g. PCB / HEG / MCE / History, Geography, Literature" autocomplete="off">
+        </div>
+
+        <div class="form-group full">
+          <label>Area of Interest / Intended University Course</label>
+          <textarea id="interest" placeholder="e.g. Medicine, Computer Science, Law, Business Administration..."></textarea>
+        </div>
+
+      </div>
+
+      <div class="form-footer">
+        <button class="btn btn-secondary" onclick="clearForm()">Clear Form</button>
+        <button class="btn btn-primary" onclick="registerStudent()">&#10003;&nbsp; Register &amp; Next Student</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    St. Lawrence University Uganda &mdash; slau.ac.ug &nbsp;&bull;&nbsp; Gulu Exhibition &nbsp;&bull;&nbsp; &#128274; Data auto-saved &mdash; safe if tab is closed or page is refreshed
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════ -->
+<!-- RECORDS PAGE -->
+<!-- ══════════════════════════════════════════ -->
+<div class="page" id="pg-records">
+
+  <div class="records-toolbar">
+    <div>
+      <h2>Registered Students</h2>
+      <p style="font-size:13px;color:var(--muted);margin-top:3px;"><span id="recordsCount">0</span> student(s) registered so far</p>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+      <input type="text" class="search-box" id="searchBox" placeholder="&#128269; Search by name or school..." oninput="renderRecords()">
+      <button class="btn-export" onclick="exportCSV()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Export to Excel
+      </button>
+      <button class="btn btn-secondary" onclick="clearAllData()" style="font-size:12px;padding:8px 14px;color:#b91c1c;border-color:#fca5a5;">&#128465; Clear All</button>
+    </div>
+  </div>
+
+  <div class="card" style="overflow-x:auto;">
+    <div id="recordsWrap">
+      <div class="empty-msg">No students registered yet. Go to the <strong>Registration</strong> tab to begin.</div>
+    </div>
+  </div>
+
+  <div class="page-footer">
+    St. Lawrence University Uganda &mdash; slau.ac.ug &nbsp;&bull;&nbsp; Gulu Exhibition &nbsp;&bull;&nbsp; Data saved locally in this session
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><span id="toastMsg"></span></div>
+
+<script>
+var STORAGE_KEY = 'slau_gulu_students';
+
+/* ── Load from localStorage on startup ── */
+var students = [];
+try {
+  var saved = localStorage.getItem(STORAGE_KEY);
+  if (saved) students = JSON.parse(saved);
+} catch(e) { students = []; }
+
+/* Run on page load to restore counter & badge */
+(function init() {
+  updateCounters();
+})();
+
+/* ── Save to localStorage ── */
+function saveData() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(students)); } catch(e) {}
+}
+
+/* ── Update all counters ── */
+function updateCounters() {
+  var n = students.length;
+  document.getElementById('totalCount').textContent = n;
+  document.getElementById('recordsCount').textContent = n;
+  var tc = document.getElementById('tabCount');
+  tc.textContent = n;
+  if (n > 0) tc.classList.add('has-data'); else tc.classList.remove('has-data');
+}
+
+/* ── Tab switching ── */
+function switchTab(name, btn) {
+  document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.tab-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('pg-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'records') renderRecords();
+}
+
+/* ── Register ── */
+function registerStudent() {
+  var name   = document.getElementById('fullName').value.trim();
+  var school = document.getElementById('school').value.trim();
+  var cls    = document.getElementById('classYear').value;
+  var gEl    = document.querySelector('input[name="gender"]:checked');
+  var gender = gEl ? gEl.value : '';
+  var combo  = document.getElementById('combination').value.trim();
+
+  if (!name || !school || !cls || !gender || !combo) {
+    showToast('Please fill in all required fields (*).', 'error');
+    return;
+  }
+
+  students.push({
+    no: students.length + 1,
+    name: name, school: school, cls: cls, gender: gender,
+    phone: document.getElementById('phone').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    combo: combo,
+    interest: document.getElementById('interest').value.trim()
+  });
+
+  saveData();
+  updateCounters();
+  showToast('\u2713 ' + name + ' registered and saved!', 'success');
+  clearForm();
+  setTimeout(function(){ document.getElementById('fullName').focus(); }, 80);
+}
+
+/* ── Clear form ── */
+function clearForm() {
+  ['fullName','school','phone','email','combination','interest'].forEach(function(id){
+    document.getElementById(id).value = '';
+  });
+  document.getElementById('classYear').value = '';
+  var c = document.querySelector('input[name="gender"]:checked');
+  if (c) c.checked = false;
+}
+
+/* ── Render records table ── */
+function renderRecords() {
+  var wrap  = document.getElementById('recordsWrap');
+  var query = (document.getElementById('searchBox').value || '').toLowerCase().trim();
+
+  var list = students.filter(function(s){
+    if (!query) return true;
+    return s.name.toLowerCase().indexOf(query) > -1 || s.school.toLowerCase().indexOf(query) > -1;
+  });
+
+  if (!students.length) {
+    wrap.innerHTML = '<div class="empty-msg">No students registered yet. Go to the <strong>Registration</strong> tab to begin.</div>';
+    return;
+  }
+
+  if (!list.length) {
+    wrap.innerHTML = '<div class="empty-msg">No results match your search.</div>';
+    return;
+  }
+
+  var rows = list.map(function(s){
+    return '<tr>' +
+      '<td>'+s.no+'</td>' +
+      '<td><strong>'+esc(s.name)+'</strong></td>' +
+      '<td>'+esc(s.school)+'</td>' +
+      '<td>'+esc(s.cls)+'</td>' +
+      '<td><span class="badge '+bc(s.gender)+'">'+esc(s.gender)+'</span></td>' +
+      '<td>'+esc(s.phone)+'</td>' +
+      '<td>'+esc(s.email)+'</td>' +
+      '<td>'+esc(s.combo)+'</td>' +
+      '<td>'+esc(s.interest)+'</td>' +
+      '</tr>';
+  }).join('');
+
+  wrap.innerHTML =
+    '<table class="full-table">' +
+    '<thead><tr>' +
+      '<th>#</th><th>Full Name</th><th>School</th><th>Class</th>' +
+      '<th>Gender</th><th>Phone</th><th>Email</th><th>Combination</th><th>Interest</th>' +
+    '</tr></thead>' +
+    '<tbody>' + rows + '</tbody>' +
+    '</table>';
+}
+
+/* ── Export ── */
+function exportCSV() {
+  if (!students.length) { showToast('No students to export yet.', 'error'); return; }
+  var h = ['No','Full Name','School','Class/Year','Gender','Phone','Email','Subject Combination','Interest'];
+  var rows = students.map(function(s){
+    return [s.no,s.name,s.school,s.cls,s.gender,s.phone,s.email,s.combo,s.interest]
+      .map(function(v){ return '"'+String(v).replace(/"/g,'""')+'"'; }).join(',');
+  });
+  var csv = [h.join(',')].concat(rows).join('\r\n');
+  var blob = new Blob(['\uFEFF'+csv], {type:'text/csv;charset=utf-8;'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'SLAU_Gulu_Exhibition_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  showToast('Exported '+students.length+' student(s) to Excel file.', 'success');
+}
+
+/* ── Clear all data (with confirmation) ── */
+function clearAllData() {
+  if (!students.length) { showToast('Nothing to clear.', 'error'); return; }
+  if (confirm('Are you sure you want to delete ALL ' + students.length + ' registered students? This cannot be undone.')) {
+    students = [];
+    saveData();
+    updateCounters();
+    renderRecords();
+    showToast('All records cleared.', 'error');
+  }
+}
+
+/* ── Helpers ── */
+function bc(g){ return g==='Male'?'badge-m':g==='Female'?'badge-f':'badge-o'; }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.className = 'toast '+(type||'success');
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(function(){ t.classList.remove('show'); }, 3200);
+}
+
+document.addEventListener('keydown', function(e){ if(e.key==='Enter'&&e.ctrlKey) registerStudent(); });
+</script>
+</body>
+</html>
